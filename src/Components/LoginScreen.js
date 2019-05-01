@@ -7,6 +7,8 @@ import './LoginScreen.css';
 import logo from '../Assets/logo.png';
 import axios from 'axios';
 
+import {MAIN_API_URL} from './Helpers/MainApiUrl';
+
 
 class LoginScreen extends React.Component {
 
@@ -25,7 +27,7 @@ class LoginScreen extends React.Component {
         var json = {"AccessToken": response.accessToken} 
     
         if (response != null){
-            axios.post("http://127.0.0.1:5000/api/externalauth/facebook",  json ).then( (response) => {
+            axios.post(MAIN_API_URL + "/api/externalauth/facebook",  json ).then( (response) => {
                 if (response.status === 200) {
                     
                     localStorage.setItem('id', response.data.id );

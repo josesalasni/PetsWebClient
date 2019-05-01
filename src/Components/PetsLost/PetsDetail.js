@@ -4,6 +4,9 @@ import AxiosApi from '../Helpers/AxiosApi';
 import NotificationBar from '../Helpers/NotificationBar';
 import Moment from 'react-moment';
 
+
+import {MAIN_API_URL} from '../Helpers/MainApiUrl';
+
 const { Meta } = Card;
 const TextArea = Input.TextArea;
 
@@ -168,7 +171,7 @@ class PetsDetail extends React.Component {
                                     {this.state.pictures.map(pet => 
                                     
                                         <div>   
-                                            <img alt="imgPublication" src={"http://127.0.0.1:5000/images/" + pet.path} />
+                                            <img alt="imgPublication" src={ MAIN_API_URL + "/images/" + pet.path} />
                                         </div>
                                     )}
                                 </Carousel>

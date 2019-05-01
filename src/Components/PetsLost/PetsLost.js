@@ -7,6 +7,8 @@ import AxiosApi from '../Helpers/AxiosApi';
 import NotificationBar from '../Helpers/NotificationBar';
 import AccountControl from '../Helpers/AccountControl';
 
+import {MAIN_API_URL} from '../Helpers/MainApiUrl';
+
 
 import './PetsLost.css';
 
@@ -359,7 +361,7 @@ class PetsLost extends React.Component {
                                     />
 
                                     { pet.path !== null &&
-                                        <img onClick={() => this.handleClickPublication(pet.publicationId)} style={{width: '100%', marginTop: '30px' }}  alt="img-publication" src={"http://127.0.0.1:5000/images/"+pet.path} />
+                                        <img onClick={() => this.handleClickPublication(pet.publicationId)} style={{width: '100%', marginTop: '30px' }}  alt="img-publication" src={ MAIN_API_URL +"/images/"+pet.path} />
                                     }
                                     
                                     

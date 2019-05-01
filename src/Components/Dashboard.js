@@ -67,6 +67,15 @@ class Dashboard extends React.Component {
         }
     }
 
+    handleLogout = () => {
+        
+        //Remove token and link to login screen
+        localStorage.clear();
+
+        this.props.history.push('/');
+        
+    }
+
     render() {
         return (
             <Layout>
@@ -132,9 +141,9 @@ class Dashboard extends React.Component {
                                 Pepega clap
                             </Menu.Item> 
                             
-                            <Menu.Item style={{ fontSize: '1.2em',  float: 'right'}} key="2">
+                            <Menu.Item onClick={this.handleLogout} style={{ fontSize: '1.2em',  float: 'right'}} key="2">
                                 <Icon type="user" />
-                                Cuenta
+                                Cerrar sesion
                             </Menu.Item>
                         </Menu>
                         

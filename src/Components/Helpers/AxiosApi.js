@@ -1,10 +1,10 @@
 import { create } from 'axios';
 
+import {MAIN_API_URL} from './MainApiUrl';
 //Set Base Url for api calls
 
-
 var AxiosApi = create({
-    baseURL: 'http://127.0.0.1:5000/'
+    baseURL: MAIN_API_URL
 });
 
 export default AxiosApi;
