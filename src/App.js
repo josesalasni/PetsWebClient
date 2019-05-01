@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { BrowserRouter, Route, Redirect } from "react-router-dom";
+import { BrowserRouter, Route} from "react-router-dom";
 import Dashboard from './Components/Dashboard';
+import LoginScreen from './Components/LoginScreen';
 
 
 class App extends Component {
@@ -8,7 +9,8 @@ class App extends Component {
         return (
             <BrowserRouter>
                 <div>
-                    <Route path="/" component={Dashboard} />
+                    <Route exact path="/" component={LoginScreen} />
+                    <Route path="/user" component={Dashboard} />
                 </div>
                
                

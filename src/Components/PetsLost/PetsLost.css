@@ -11,3 +11,8 @@
     }
 }
 
+#cardtitle {
+    /* Animation transition height */
+    -webkit-transition: height 1.2s; /* Safari */
+    transition: height 1.2s;
+}

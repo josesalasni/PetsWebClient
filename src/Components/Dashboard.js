@@ -1,16 +1,16 @@
 import React from 'react';
-import { Layout, Menu, Icon, Button } from 'antd';
+import { Layout, Menu, Icon } from 'antd';
 import { Route, Link, Redirect } from "react-router-dom";
 import './Dashboard.css';
 import logo from '../Assets/logo.png';
 
 import PetsLost from './PetsLost/PetsLost';
+import InsertCommentPetsDetail from './PetsLost/PetsDetail';
+import {MapsAll} from './Maps/MapsAll';
 
 const {
     Header, Content, Footer, Sider,
 } = Layout;
-
-const size = Button.size;
 
 class Dashboard extends React.Component {
     state = {
@@ -22,8 +22,9 @@ class Dashboard extends React.Component {
 
     //Only collapse on mobile
     toggle = () => {
-        
-        if (this.state.mobile == true){
+        //this.props.history.push('/dashboard')
+
+        if (this.state.mobile === true){
             
             this.setState({
                 collapsed: !this.state.collapsed,
@@ -36,12 +37,13 @@ class Dashboard extends React.Component {
         this.setState({
             current: e.key,
         });
+
     }
 
     //When the sider is in mobiles hide it , and show it in pc
     handleBreakPoint = (broken) => {
-        if (broken == true){
-            if (this.state.collapsed == false) {
+        if (broken === true){
+            if (this.state.collapsed === false) {
                 this.setState ({
                     collapsed : true
                 })
@@ -52,7 +54,7 @@ class Dashboard extends React.Component {
         }
         else {
             //Show the sider if pass from mobile view to pc
-            if (this.state.collapsed == true) {
+            if (this.state.collapsed === true) {
                 this.setState ({
                     collapsed : false
                 })
@@ -83,29 +85,29 @@ class Dashboard extends React.Component {
                         }}
                     >
                         <div style={{height: 'auto', padding:'4px', background: '#388e3c', textAlign: 'center'}} className="logo" > 
-                            <img width="auto" height="110px" style={{margin: '10px' }} src={logo} ></img>
+                            <img alt="logo" width="auto" height="110px" style={{margin: '10px' }} src={logo} ></img>
                             <h1 style={{fontSize: '1.7em', color: 'white'  }}> Pets Nicaragua</h1>
                         </div>
 
                         {/* Menu Items */}
-                        <Menu theme="dark" style={{marginTop: '24px'}} mode="inline" defaultSelectedKeys={['4']}>
+                        <Menu theme="dark" style={{marginTop: '24px'}} mode="inline" defaultSelectedKeys={['1']}>
                             
                             
-                            <Menu.Item  key="1">
+                            <Menu.Item key="1">
                                 <Icon type="exclamation" />
                                 <span className="nav-text">Publicaciones</span>
-                                <Link to="/publicaciones">Publicaciones</Link>
+                                <Link to="/user/publicaciones">Publicaciones</Link>
                             </Menu.Item>
                                 
                             <Menu.Item key="2">
                                 <Icon type="smile" />
                                 <span className="nav-text">Mapa</span>
-                                <Link to="/donaciones">Mapa</Link>
+                                <Link to="/user/map">Mapa</Link>
                             </Menu.Item>
                             
-                            {this.props.location.pathname == '/' &&
+                            {this.props.location.pathname === '/user' &&
                                 <h2>
-                                    <Redirect to="/publicaciones"/>
+                                    <Redirect to="/user/publicaciones"/>
                                 </h2>
                             }
         
@@ -140,11 +142,12 @@ class Dashboard extends React.Component {
                         </Header>
                         
                         {/* Main Content where render sub components */}
-                        <Content id="mainContent" style={{marginLeft: '216px', marginTop: '116px', marginRight: '16px' }}>
+                        <Content id="mainContent" style={{marginLeft: '200px', marginTop: '116px', marginRight: '16px' }}>
                             <div  style={{ minHeight: 760 }}>
 
-                                <Route path="/publicaciones" component={PetsLost} />
-                                <Route path="/donaciones" component={PetsLost} />
+                                <Route exact path="/user/publicaciones" component={PetsLost} />
+                                <Route path="/user/map" component={MapsAll} />
+                                <Route exact path="/user/publicaciones/:id/detalle/" component={InsertCommentPetsDetail} />
                             </div>
                         </Content>
                         

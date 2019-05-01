@@ -1,3 +1,36 @@
+.containerdetail{
+    margin:0 auto;max-width:1280px;width:100%
+}
+@media only screen and (min-width: 601px){
+    .containerdetail{width:85%}
+}
+@media only screen and (min-width: 993px){
+    .containerdetail{width:70%}
+}
+
+
+.container {
+    margin-right: auto;
+    margin-left: auto;
+}
+@media (min-width: 768px) {
+    .container {
+        width: 750px;
+    }
+}
+@media (min-width: 992px) {
+    .container {
+        width: 970px;
+        padding-right: 50px;
+        padding-left: 50px;
+    }
+}
+@media (min-width: 1200px) {
+    .container {
+        width: 1170px;
+    }
+}
+
 
 .MainLayout {
     background: black;
@@ -44,3 +77,30 @@
     background: none;
 }
 
+
+.ant-carousel .slick-slide {
+    text-align: center;
+    height: 400px;
+    width: 100%;
+    line-height: 160px;
+    background: #364d79;
+    overflow: hidden;
+  }
+  
+  .ant-carousel .slick-slide h3 {
+    color: #fff;
+  }
+
+  .ant-carousel .slick-slide img{
+    height: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    width: auto !important;
+  }
+
+  .leaflet-container {
+    height: 400px;
+    width: 100%;
+    z-index: 2;
+}

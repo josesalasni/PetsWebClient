@@ -1,10 +1,12 @@
-import React, { Component } from 'react';
-import { Row, Col, Card, Icon, Avatar, Select,  Form, Input, Button, Upload, Modal, BackTop } from 'antd';
-import Axios from 'axios';
+import React from 'react';
+import { Row, Col, Card, Icon, Avatar, Select, Button, BackTop} from 'antd';
 import InsertBoxPetsLost from './InsertBox';
+import Moment from 'react-moment';
 
 import AxiosApi from '../Helpers/AxiosApi';
 import NotificationBar from '../Helpers/NotificationBar';
+import AccountControl from '../Helpers/AccountControl';
+
 
 import './PetsLost.css';
 
@@ -25,9 +27,11 @@ class PetsLost extends React.Component {
             loadingBtnSearch : false,
             disabledBtn: true,
             Paging : {},
-            TypePet : 'Perros',
-            TypePub : 'Desaparecido',
-            StatusPub : 'Pendiente'
+            TypePet : '',
+            TypePub : '',
+            StatusPub : 'Pendiente',
+            logged : true,
+            compressed : true
         };
       
     }
@@ -52,6 +56,7 @@ class PetsLost extends React.Component {
         //Api call
         this.setState ({loadingBtnSearch : true});
 
+        //Set bolean status 
         var status = this.state.StatusPub;
         var boolStatus = false;
         if (status === "Pendiente")
@@ -59,14 +64,26 @@ class PetsLost extends React.Component {
         else 
             boolStatus = true;
 
-        AxiosApi.get("api/publication" , 
-            {  params: {
+        //Get token and set param settings for the api call
+        var token = localStorage.getItem('auth_token');
+    
+        var settings = {
+            params: {
                 'typePublication' : this.state.TypePub,
                 'status' : boolStatus,
                 'categoryName' : this.state.TypePet
 
-            }}).then( (response) => {
-            if(response.status == "200"){
+            }, headers : {
+                "Content-Type": "application/json",
+                "Accept" : "application/json",
+                "Authorization": 'Bearer ' + token
+            }
+        }
+
+        //Api call
+        AxiosApi.get("api/publication" , settings).then( (response) => {
+
+            if(response.status === 200){
                 
                 var responseData = response.data;
 
@@ -77,7 +94,7 @@ class PetsLost extends React.Component {
                 this.setState ( {ListPets : [] }, () => {
                     var listPets = this.state.ListPets;
 
-                    responseData.map((Pet)=>{
+                    responseData.forEach((Pet)=>{
                         listPets.push(Pet);
                     });
 
@@ -86,23 +103,28 @@ class PetsLost extends React.Component {
                 
                 //Set the paging headers
                 this.setState( {Paging : paging}, () => {
-                    if (this.state.Paging.nextPage == "Yes") {
+                    if (this.state.Paging.nextPage === "Yes") {
                         this.setState ( {disabledBtn : false, loadMessage: 'Hay más publicaciones' } );
                     }
                     else {
-                        this.setState ( {loadMessage : "No hay más publicaciones disponibles"} );
+                        this.setState ( {disabledBtn : true , loadMessage : "No hay más publicaciones disponibles"} );
                     }
                 });
      
+            }
+            //Handle errors
+            else {
+                NotificationBar( response.status );
             }
 
 		})
 		.catch( (error) => {
             this.setState ({loadingBtnSearch : false})
+            NotificationBar( );
 
-            NotificationBar( error);
-
-            console.log(error);
+            if (error.response.status === 401){
+                this.setState({logged : false})
+            }
         });
         
     }
@@ -110,28 +132,37 @@ class PetsLost extends React.Component {
     // Update the paging if the user clicks the button the end of the page 
     updatePaging = () => {
         //Update the scroll infinite        
-        if (this.state.Paging.nextPage = "Yes"){
+        if (this.state.Paging.nextPage === "Yes"){
 
             var status = this.state.StatusPub;
             var boolStatus = false;
-            if (status == "Pendiente")
+            if (status === "Pendiente")
                 boolStatus = false;
             else 
                 boolStatus = true;
 
+            //Get settings and token
             this.setState({ loadingBtn: true });
             var currentPage = this.state.Paging.currentPage + 1;
+            var token = localStorage.getItem('auth_token');
 
-            AxiosApi.get("api/publication", {  
+            var settings = {
                 params: {
                     'pageNumber' : currentPage,
                     'typePublication' : this.state.TypePub,
                     'status' : boolStatus,
                     'categoryName' : this.state.TypePet
-            }}).then( (response) => {
-                if(response.status == "200"){
+                }, headers : {
+                    "Content-Type": "application/json",
+                    "Accept" : "application/json",
+                    "Authorization": 'Bearer ' + token
+                }
+            }
+
+            //Call Api
+            AxiosApi.get("api/publication", settings ).then( (response) => {
+                if(response.status === 200){
                     var responseData = response.data;
-                    console.log(response);
 
                     //var paging = this.state.Paging;
                     var paging = JSON.parse(response.headers.pagingheader);
@@ -139,7 +170,7 @@ class PetsLost extends React.Component {
                     var listPets = this.state.ListPets;
 
                     //Map to the list
-                    responseData.map((Pet)=>{
+                    responseData.forEach((Pet) => {
                         listPets.push(Pet);
                     });
                     
@@ -149,7 +180,7 @@ class PetsLost extends React.Component {
                     //Set the paging headers
                     this.setState( {Paging : paging}, () => {
                         console.log(this.state.Paging);
-                        if (this.state.Paging.nextPage == "Yes") {
+                        if (this.state.Paging.nextPage === "Yes") {
                             this.setState ( {disabledBtn : false, loadMessage: "Hay más publicaciones" } );
                         }else {
                             this.setState ( {disabledBtn : true, loadMessage : 'No hay más publicaciones disponibles'} );
@@ -189,22 +220,65 @@ class PetsLost extends React.Component {
     handleTypePubChange = (value) => {
         this.setState ( {TypePub : value })
     }
+
+    handleClickPublication = (id) => {
+        this.props.history.push('publicaciones/'+id+'/detalle');
+    }
+
+    compressBtn = () => {
+        
+        if (this.state.compressed === true){
+            this.setState ( {compressed : false})
+        }else {
+            this.setState ({ compressed : true});
+        }
+
+    }
+
+    //Stop loop 
+    componentDidUpdate() {
+        if (this.state.logged === false) {
+            this.setState({
+                logged : true
+            });
+        }
+    }  
       
 
     render() {
         return (
-            <div id="PetsLostPage" style={{marginLeft: '50px', marginRight: '50px'}}>
+            <div className="container" id="PetsLostPage" >
                 <Row>
+
+                    { this.state.logged === false &&
+                        <AccountControl/>
+                    }
+
                     {/* Add box  */}
                     <Col lg={14} span={24} >
                         <div id="cardtitle" >
-                        
+                            
                             <Card
                             type="inner"
                             title="Agregar una publicación"
-                            extra={<Icon type="message" />}
+                            extra={ 
+                                <Button onClick={this.compressBtn} type="primary" >
+                                    <div> <Icon style={{marginRight: '5px'}} type="message"/> 
+                                    { this.state.compressed === false &&
+                                        <div style={{display: 'inline'}}>Ocultar</div>
+                                    }
+                                    { this.state.compressed === true &&
+                                        <div style={{display: 'inline'}}>Mostrar</div>
+                                    }
+
+                                    </div>
+                                </Button>   
+                            }
                             >
-                                <InsertBoxPetsLost onSubmitClick={this.fillData} />
+                                <div style={{height: '30px'}}>
+                                    <InsertBoxPetsLost compress={this.state.compressed} onSubmitClick={this.fillData} />
+                                </div>
+                               
                           
                             </Card>
                         
@@ -224,7 +298,8 @@ class PetsLost extends React.Component {
                                         Tipo de mascota
                                     </Col>
                                     <Col span={12}>
-                                        <Select size="small" style={{float: 'right'}} defaultValue="Perros" onChange={this.handleTypePetChange}>
+                                        <Select size="small" style={{float: 'right'}} defaultValue="Todos" onChange={this.handleTypePetChange}>
+                                            <Option value="">Todos</Option>
                                             <Option value="Perros">Perros</Option>
                                             <Option value="Gatos">Gatos</Option>
                                             <Option value="Caballos" >Caballos</Option>
@@ -236,7 +311,8 @@ class PetsLost extends React.Component {
                                         Tipo de Publicación
                                     </Col>
                                     <Col style={{float: 'right', marginTop: '30px'}} span={12}>
-                                        <Select style={{float: 'right'}} size="small" defaultValue="Desaparecido" onChange={this.handleTypePubChange}>
+                                        <Select style={{float: 'right'}} size="small" defaultValue="Ambos" onChange={this.handleTypePubChange}>
+                                            <Option value="">Ambos</Option>
                                             <Option value="Desaparecido">Desaparecidos</Option>
                                             <Option value="Donaciones">Donaciones</Option>
                                         </Select>
@@ -266,22 +342,27 @@ class PetsLost extends React.Component {
                     </Col>
 
                     {/* Main Content where render cards */}
-                    <Col lg={14} span={24}>    
+                    <Col id="cardscol" lg={14} span={24}>    
                         <div id="cardsPetsLost">
 
                             {this.state.ListPets.map(pet =>
                                 
                                 <Card 
                                 style={{marginTop: '30px'}}  key={pet.publicationId}
-                                actions={[<Icon type="environment" />, <Icon type="message" />, <Icon type="share-alt" />]}>
+                                actions={[<Icon type="environment" />, <Icon onClick={() => this.handleClickPublication(pet.publicationId)} type="message" />, <Icon type="share-alt" />]}>
                                     <Meta
                                         key={"card-" + pet.publicationId}
                                         avatar={<Avatar src={pet.pictureUrl} />}
-                                        title={[pet.firstName, " ", pet.lastName,  <div key={"div-" + pet.publicationId } style={{float: 'right'}}> {pet.datePublish} </div>   ] } 
+                                        title={[pet.firstName, " ", pet.lastName,  <div key={"div-" + pet.publicationId } style={{float: 'right'}}>  <Moment locale="es" fromNow>{pet.datePublish}</Moment> </div>   ] } 
                                         description={pet.description } 
                                         
                                     />
-                                    <img style={{width: '100%', marginTop: '30px' }} alt="example" src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png" />
+
+                                    { pet.path !== null &&
+                                        <img onClick={() => this.handleClickPublication(pet.publicationId)} style={{width: '100%', marginTop: '30px' }}  alt="img-publication" src={"http://127.0.0.1:5000/images/"+pet.path} />
+                                    }
+                                    
+                                    
                                 </Card>
                                 
                             )} 
