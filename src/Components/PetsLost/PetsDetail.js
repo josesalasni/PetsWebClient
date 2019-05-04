@@ -2,6 +2,7 @@ import React from 'react';
 import { Row, Col, Card, Comment, Form, List, Icon, Carousel, Avatar, Input, Button} from 'antd';
 import AxiosApi from '../Helpers/AxiosApi';
 import NotificationBar from '../Helpers/NotificationBar';
+import {CheckAccount} from '../Helpers/CheckAccount';
 import Moment from 'react-moment';
 
 
@@ -67,6 +68,7 @@ class PetsDetail extends React.Component {
     }
     
     componentDidMount() {
+        CheckAccount(this.props);
         this.props.form.validateFields();
         this.fillData();
     }

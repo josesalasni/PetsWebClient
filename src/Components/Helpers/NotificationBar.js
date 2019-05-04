@@ -22,6 +22,7 @@ const NotificationBar = (Code = null) => {
     }
 
     if (Code !== null && Code !== 401)
+    {
         notification.config({
             placement: 'bottomRight',
             bottom: 50,
@@ -32,6 +33,24 @@ const NotificationBar = (Code = null) => {
             message: 'Error',
             description: message,
         });
+    }
+    else {
+        //Token expired or modified
+        if (localStorage.getItem('auth_token') !== null) {
+            localStorage.clear();
+        } 
+
+        notification.config({
+            placement: 'bottomRight',
+            bottom: 50,
+            duration: 5,
+        });
+
+        notification["error"]({
+            message: 'error',
+            description: 'Hubo un error validando su sesion, inicie sesión nuevamente',
+        });
+    } 
     
 };
 

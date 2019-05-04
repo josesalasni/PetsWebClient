@@ -5,7 +5,7 @@ import Moment from 'react-moment';
 
 import AxiosApi from '../Helpers/AxiosApi';
 import NotificationBar from '../Helpers/NotificationBar';
-import AccountControl from '../Helpers/AccountControl';
+import {CheckAccount} from '../Helpers/CheckAccount';
 
 import {MAIN_API_URL} from '../Helpers/MainApiUrl';
 
@@ -32,7 +32,6 @@ class PetsLost extends React.Component {
             TypePet : '',
             TypePub : '',
             StatusPub : 'Pendiente',
-            logged : true,
             compressed : true
         };
       
@@ -49,6 +48,7 @@ class PetsLost extends React.Component {
 
     /* Call initial */
     componentDidMount() {
+        CheckAccount(this.props);
         this.fillData();
     }
 
@@ -122,11 +122,7 @@ class PetsLost extends React.Component {
 		})
 		.catch( (error) => {
             this.setState ({loadingBtnSearch : false})
-            NotificationBar( );
-
-            if (error.response.status === 401){
-                this.setState({logged : false})
-            }
+            NotificationBar( error.response.status );
         });
         
     }
@@ -237,25 +233,11 @@ class PetsLost extends React.Component {
 
     }
 
-    //Stop loop 
-    componentDidUpdate() {
-        if (this.state.logged === false) {
-            this.setState({
-                logged : true
-            });
-        }
-    }  
-      
 
     render() {
         return (
             <div className="container" id="PetsLostPage" >
                 <Row>
-
-                    { this.state.logged === false &&
-                        <AccountControl/>
-                    }
-
                     {/* Add box  */}
                     <Col lg={14} span={24} >
                         <div id="cardtitle" >
