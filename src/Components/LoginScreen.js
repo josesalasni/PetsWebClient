@@ -1,7 +1,6 @@
 import React from 'react';
 import FacebookLogin from 'react-facebook-login';
 import { Card, Icon, Spin } from 'antd';
-import { Redirect } from "react-router-dom";
 
 import './LoginScreen.css';
 import logo from '../Assets/logo.png';
@@ -18,8 +17,11 @@ class LoginScreen extends React.Component {
     }
 
     componentDidMount = () => {
+
         if (localStorage.getItem('auth_token') != null) {
             this.setState ({logged : true});
+
+            this.props.history.push ('/user/publicaciones');
         } 
     }
 
@@ -33,12 +35,11 @@ class LoginScreen extends React.Component {
 
             axios.post(MAIN_API_URL + "/api/externalauth/facebook",  json ).then( (response) => {
                 if (response.status === 200) {
-                    
                     localStorage.setItem('id', response.data.id );
                     localStorage.setItem('auth_token', response.data.auth_token);
                     localStorage.setItem('expires_in', response.data.expires_in);
-                    this.setState({logged : true})
-                    this.setState({loading: false})
+                    this.setState({loading: false});
+                    this.props.history.push ('/user/publicaciones');
                  
                 }else {
                     this.setState({loading: false})
@@ -74,11 +75,6 @@ class LoginScreen extends React.Component {
                 <div style={{ textAlign: 'center', left: '50%', top: '10%', transform: 'translate(-50%, -10%) ',  position: 'fixed' }}> 
                     <img alt="logo" width="auto" height="140px" style={{margin: '10px' }} src={logo} ></img> 
                 </div>
-
-                { this.state.logged === true &&
-                    <Redirect to="/user"/>
-                }
-
 
                 <Card title="Inicia sesión para acceder" bordered={false} style={{ textAlign: 'center', left: '50%', top: '50%', transform: 'translate(-50%, -10%) ',  position: 'fixed' }}>
                     

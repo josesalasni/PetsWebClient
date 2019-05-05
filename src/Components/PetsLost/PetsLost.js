@@ -85,10 +85,11 @@ class PetsLost extends React.Component {
         //Api call
         AxiosApi.get("api/publication" , settings).then( (response) => {
 
+            console.log(response);
             if(response.status === 200){
                 
                 var responseData = response.data;
-
+                
                 //var paging = this.state.Paging;
                 var paging = JSON.parse(response.headers.pagingheader);
 

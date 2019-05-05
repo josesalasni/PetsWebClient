@@ -51,7 +51,6 @@ const NotificationBar = (Code = null) => {
             description: 'Hubo un error validando su sesion, inicie sesión nuevamente',
         });
     } 
-    
 };
 
 

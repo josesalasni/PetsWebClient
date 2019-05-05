@@ -154,9 +154,9 @@ class Dashboard extends React.Component {
                         <Content id="mainContent" style={{marginLeft: '200px', marginTop: '116px', marginRight: '16px' }}>
                             <div  style={{ minHeight: 760 }}>
 
-                                <Route exact path="/user/publicaciones" component={PetsLost} />
-                                <Route path="/user/map" component={MapsAll} />
-                                <Route exact path="/user/publicaciones/:id/detalle/" component={InsertCommentPetsDetail} />
+                                <Route exact path={"/user/publicaciones"} component={PetsLost} />
+                                <Route path={"/user/map"} component={MapsAll} />
+                                <Route exact path={"/user/publicaciones/:id/detalle/"} component={InsertCommentPetsDetail} />
                             </div>
                         </Content>
                         

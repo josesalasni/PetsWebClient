@@ -7,10 +7,10 @@ import LoginScreen from './Components/LoginScreen';
 class App extends Component {
     render() {
         return (
-            <BrowserRouter>
+            <BrowserRouter basename={process.env.PUBLIC_URL}>
                 <div>
-                    <Route exact path="/" component={LoginScreen} />
-                    <Route path="/user" component={Dashboard} />
+                    <Route exact path={"/"} component={LoginScreen} />
+                    <Route path={"/user"} component={Dashboard} />
                 </div>
                
                
